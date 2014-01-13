@@ -1,0 +1,27 @@
+{
+  "name": "docker-hipache-sync",
+  "version": "0.1.0",
+  "description": "Sync Hipache with Docker. Useful for performing zero-downtime updates of Docker-ized services.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/FrozenRidge/docker-hipache-sync.git"
+  },
+  "keywords": [
+    "docker",
+    "hipache"
+  ],
+  "author": "Niall O'Higgins <niallo@frozenridge.co>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/FrozenRidge/docker-hipache-sync/issues"
+  },
+  "homepage": "https://github.com/FrozenRidge/docker-hipache-sync",
+  "dependencies": {
+    "async": "~0.2.9",
+    "redis": "~0.10.0"
+  }
+}
