@@ -31,16 +31,13 @@ var table  = require('cli-table')
 
 var config
 
-function findHttpPort(ports) {
+var findHttpPorts = module.exports.findHttpPorts = function(ports) {
 
   var webPorts = config.webPorts.split(',')
 
   for (var i = 0; i < ports.length; i++) {
     var p = ports[i]
-    // TODO: use webPorts array
-    if (p.PrivatePort === 8080 && p.PublicPort !== 0) return p.PublicPort
-    if (p.PrivatePort === 3000 && p.PublicPort !== 0) return p.PublicPort
-    if (p.PrivatePort === 80 && p.PublicPort !== 0)   return p.PublicPort
+    if (p.PublicPort !== 0 && p.PrivatePort.toString() in webPorts) return p.PublicPort
   }
 
   return false
@@ -146,18 +143,26 @@ function usage() {
   process.exit(1)
 }
 
-if (argv._.length < 1) {
-  usage()
-}
-
-if (!argv._[0] in ['sync', 'show']) {
-  usage()
-}
-
 config = rc('dockerfu', DEFAULT_CONFIG)
+// for testing
+module.exports.config = config
 
-console.log("config: ", config)
+if (!module.parent) {
 
-argv._.forEach(function(op) {
+  if (argv._.length < 1) {
+    usage()
+  }
 
-})
+  if (!argv._[0] in ['sync', 'show']) {
+    usage()
+  }
+
+
+
+  console.log("config: ", config)
+
+  argv._.forEach(function(op) {
+
+  })
+
+}
