@@ -35,22 +35,21 @@ var findHttpPorts = module.exports.findHttpPorts = function(ports) {
 
   var webPorts = config.webPorts.split(',')
 
+
   for (var i = 0; i < ports.length; i++) {
     var p = ports[i]
-    if (p.PublicPort !== 0 && p.PrivatePort.toString() in webPorts) return p.PublicPort
+    var privPort = p.PrivatePort.toString()
+    if (p.PublicPort !== 0 && webPorts.indexOf(privPort) !== -1) return p.PublicPort
   }
 
   return false
 }
-
-
 
 function containerList(err, res) {
 
   var f = []
 
   var createRoute = function(k, c){
-    // We look for port 80, 8080 and 3000 to forward. We assume these are HTTP.
     var port = findHttpPort(c.Ports)
     if (!port) {
       console.log("error: couldn't find valid public http port for container %s", c.Id)
@@ -156,8 +155,6 @@ if (!module.parent) {
   if (!argv._[0] in ['sync', 'show']) {
     usage()
   }
-
-
 
   console.log("config: ", config)
 

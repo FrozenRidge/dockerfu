@@ -14,7 +14,6 @@ describe('#dockerfu', function() {
       var samplePorts = [{PublicPort:123, PrivatePort:123}]
       var r = dockerfu.findHttpPorts(samplePorts)
       expect(r).to.eql(123)
-      done()
     })
 
   })
