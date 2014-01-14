@@ -9,12 +9,17 @@ var DEFAULT_CONFIG = {
   // If dockerHost and dockerPort are set, will connect using TCP
   dockerHost: null,
   dockerPort: null,
+  // Hipache backend. Defaults to 127.0.0.1
+  hipacheBackend: 'http://127.0.0.1',
   // Ports which will be routed to in Hipache. Expected to be HTTP servers.
   webPorts: "8080,80,3000",
   // Prefix for webapp docker images. E.g. image frozenridge/foo -> http://foo.frozenridge.co
+  // We assume that a container with suffix 'www' or 'web' maps to both root domain and www
+  // e.g. frozenridge/web maps to http://frozenridge.co and http://www.frozenridge.co
+  // stridercd/www maps to http://stridercd.com and http://www.stridercd.com
   prefixMaps: "frozenridge:frozenridge.co,stridercd:stridercd.com",
   // Special maps for FQDNs
-  exceptionMaps: "frozenridge/web:www.frozenridge.co,stridercd/www:www.stridercd.com"
+  exceptionMaps: "frozenridge/gitbackups:gitbackups.com,frozenridge/gitbackups:www.gitbackups.com"
 }
 
 var argv   = require('optimist').argv
@@ -54,7 +59,7 @@ function containerList(err, res) {
       console.log("error: couldn't find valid public http port for container %s", c.Id)
       process.exit(1)
     }
-    var backend = 'http://127.0.0.1:' + port
+    var backend = config.hipacheBackend + ':' + port
     f.push(function(cb) {
       redis.multi()
         .del('frontend:' + k)
@@ -128,11 +133,13 @@ function usage() {
     chars: {'mid': '', 'left-mid': '', 'mid-mid': '', 'right-mid': ''},
   });
   t.push(['--config FILE', 'Load dockerfu config from FILE (see https://github.com/dominictarr/rc)'])
-  t.push(['--redisHost HOSTNAME', 'Redis hostname [default: localhost]'])
-  t.push(['--redisPort PORT', 'Redis port [default: 6376]'])
   t.push(['--dockerSocketPath PATH', 'Docker UNIX domain socket path [default: /var/run/docker.sock]'])
   t.push(['--dockerHost HOSTNAME', 'Docker TCP Host'])
   t.push(['--dockerPort PORT', 'Docker TCP Port'])
+  t.push(['--exceptionMaps IMAGE:FQDN[,IMAGE:FQDN,...]', 'List of docker images -> FQDN map exceptions'])
+  t.push(['--prefixMaps PREFIX:DOMAIN[,PREFIX:DOMAIN,...]', 'List of docker image prefix -> domain maps'])
+  t.push(['--redisHost HOSTNAME', 'Redis hostname [default: localhost]'])
+  t.push(['--redisPort PORT', 'Redis port [default: 6376]'])
   t.push(['--webPorts PORT[,PORT,...]', 'List of Web ports in containers [default: 80,8080,3000]'])
   console.log(t.toString())
 
