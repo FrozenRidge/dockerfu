@@ -1,14 +1,14 @@
 {
-  "name": "docker-hipache-sync",
+  "name": "dockerfu",
   "version": "0.1.0",
-  "description": "Sync Hipache with Docker. Useful for performing zero-downtime updates of Docker-ized services.",
+  "description": "Martial Docker and Hipache. Useful for performing zero-downtime updates of Docker-ized services.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/FrozenRidge/docker-hipache-sync.git"
+    "url": "git://github.com/FrozenRidge/dockerfu.git"
   },
   "keywords": [
     "docker",
@@ -17,11 +17,13 @@
   "author": "Niall O'Higgins <niallo@frozenridge.co>",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/FrozenRidge/docker-hipache-sync/issues"
+    "url": "https://github.com/FrozenRidge/dockerfu/issues"
   },
-  "homepage": "https://github.com/FrozenRidge/docker-hipache-sync",
+  "homepage": "https://github.com/FrozenRidge/dockerfu",
   "dependencies": {
     "async": "~0.2.9",
-    "redis": "~0.10.0"
+    "redis": "~0.10.0",
+    "dockerode": "~1.2.2",
+    "rc": "~0.3.2"
   }
 }
