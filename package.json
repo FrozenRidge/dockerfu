@@ -1,7 +1,7 @@
 {
   "name": "dockerfu",
   "version": "0.1.0",
-  "description": "Martial Docker and Hipache. Useful for performing zero-downtime updates of Docker-ized services.",
+  "description": "Martial Docker and Hipache. Techniques for zero-downtime updates of Docker-ized services and more.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
