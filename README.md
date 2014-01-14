@@ -1,4 +1,5 @@
-docker-hipache-sync
-===================
+Dockerfu
+========
 
-Sync Hipache with Docker. Useful for performing zero-downtime updates of Dockerized services.
+Glue between Docker and Hipache. Techniques to do zero-downtime updates of Docker containers etc.
+
