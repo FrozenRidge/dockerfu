@@ -18,7 +18,7 @@ Prefix Maps are the convention that routable Docker images will be named *prefix
 
 At FrozenRidge, we use Docker for everything and therefore have a large number of containers which map to various domains off `frozenridge.co` and `stridercd.com`.
 
-For instance, our blog (http://blog.frozenridge.co) is a Docker image named `frozenridge/blog`. Our marketing homepage (http://frozenridge.co and http://www.frozenridge.co) is a Docker image named `frozenridge/web`. With the Prefix Map `frozenridge:frozenridge.co`, Dockerfu will create Hipache routes for `frozenridge/blog` container the running instance of 
+For instance, our blog (http://blog.frozenridge.co) is a Docker image named `frozenridge/blog`. Our marketing homepage (http://frozenridge.co and http://www.frozenridge.co) is a Docker image named `frozenridge/web`. With the Prefix Map `frozenridge:frozenridge.co`, Dockerfu will create Hipache routes for http://blog.frozenridge.co to the public web port of the running `frozenridge/blog` Docker container. Furthermore, `web` and `www` suffixes are treated specially, such that Dockerfu will create Hipache routes for *both* http://www.frozenridge.co *and* http://frozenridge.co to the public web port of the running `frozenridge/web` Docker container.
 
 
 ### Exception Maps
