@@ -2,6 +2,7 @@ Dockerfu
 ========
 
 [![Build Status](https://frozenridge.stridercd.com/frozenridge/dockerfu/badge)](https://frozenridge.stridercd.com/frozenridge/dockerfu/)
+
 ![Dockerfu image](http://farm6.staticflickr.com/5485/10700976604_0aa7f937aa.jpg)
 
 Glue between [Docker](http://docker.io) and [Hipache](https://github.com/dotcloud/hipache). Techniques to do zero-downtime updates of Docker containers etc.
