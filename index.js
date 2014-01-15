@@ -44,10 +44,10 @@ var findHttpPorts = module.exports.findHttpPorts = function(ports) {
   return false
 }
 
-var parsePrefixMaps = module.exports.parsePrefixMaps = function(config) {
+var parseMaps = module.exports.parseMaps = function(m) {
 
   var maps = []
-  config.prefixMaps.split(",").forEach(function(map) {
+  m.split(",").forEach(function(map) {
     maps.push(map.split(":"))
   })
 
@@ -79,16 +79,24 @@ function containerList(redis, err, res) {
 
   }
 
-  var prefixMaps = parsePrefixMaps(config)
+  var prefixMaps = parseMaps(config.prefixMaps)
+  var exceptionMaps = parseMaps(config.exceptionMaps)
 
   res.forEach(function(c) {
+
+    // handle exception maps first
+    var idx
+    for (idx = 0; idx < exceptionMaps.length; idx++) {
+      if (exceptionMaps[idx][0] === c.Image.split(':')[0]) {
+        return createRoute(exceptionMaps[idx][1], c)
+      }
+    }
 
     var img = c.Image.split('/')
     // ignore if doesn't match our format
     if (img.length !== 2) return
 
     var found = false
-    var idx
     for (idx = 0; idx < prefixMaps.length; idx++) {
       if (prefixMaps[idx][0] === img[0]) {
         found = true
@@ -98,8 +106,8 @@ function containerList(redis, err, res) {
 
     if (!found) return
 
-    var domain = prefixMaps[idx][0]
-    var subdomain = prefixMaps[idx][1]
+    var domain = prefixMaps[idx][1]
+    var subdomain = img[1].split(':')[0]
     createRoute(subdomain + '.' + domain, c)
     // special case for 'www' and 'web' containers.
     // these also map to root of domain and 'www.'
