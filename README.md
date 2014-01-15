@@ -5,7 +5,28 @@ Dockerfu
 
 ![Dockerfu image](http://farm6.staticflickr.com/5485/10700976604_0aa7f937aa.jpg)
 
-Glue between [Docker](http://docker.io) and [Hipache](https://github.com/dotcloud/hipache). Techniques to do zero-downtime updates of Docker containers etc.
+Glue between [Docker](http://docker.io) and [Hipache](https://github.com/dotcloud/hipache). Techniques to do Docker routing, zero-downtime updates of Docker containers etc.
+
+Docker Routing with Dockerfu
+============================
+
+Dockerfu provides a way to dynamically route URLs to particular Docker containers. To do this, it uses two conventions:
+
+### Prefix Maps
+
+Prefix Maps are the convention that routable Docker images will be named <prefix>/<suffix> (e.g. frozenridge/www). <prefix> maps to a domain (e.g. frozenridge.co) and the suffix maps to a subdomain (e.g. www). These Prefix Maps are of course configurable. 
+
+At FrozenRidge, we use Docker for everything and therefore have a large number of containers which map to various domains off `frozenridge.co` and `stridercd.com`.
+
+For instance, our blog (http://blog.frozenridge.co) is a Docker image named `frozenridge/blog`. Our marketing homepage (http://frozenridge.co and http://www.frozenridge.co) is a Docker image named `frozenridge/web`. With the Prefix Map `frozenridge:frozenridge.co`, Dockerfu will route the running instance of 
+
+
+### Exception Maps.
+
+Sometimes you just want to route an arbitrary Docker image to an arbitrary URL, without a convention. Exception maps let you do just this. Say you want to map `frozenridge/gitbackups` to the URL http://gitbackups.com. This is easy with the exception map "frozenridge/gitbackups:gitbackups.com".
+
+Zero-Downtime Updates of Docker Containers with Dockerfu
+========================================================
 
 Installation
 ============
