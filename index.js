@@ -55,85 +55,6 @@ var parseMaps = module.exports.parseMaps = function(m) {
   return maps
 }
 
-function containerList(redis, err, res) {
-
-  var f = []
-
-  var createRoute = function(k, c){
-    var port = findHttpPorts(c.Ports)
-    if (!port) {
-      console.log("error: couldn't find valid public http port for container %s", c.Id)
-      process.exit(1)
-    }
-    var backend = config.hipacheBackend + ':' + port
-    f.push(function(cb) {
-      redis.multi()
-        .del('frontend:' + k)
-        .rpush('frontend:' + k, k)
-        .rpush('frontend:' + k, backend)
-        .exec(function(err, res) {
-          if (err) return cb(err)
-          console.log("mapped %s to %s", k, backend)
-          cb()
-        })
-    })
-
-  }
-
-  var prefixMaps = parseMaps(config.prefixMaps)
-  var exceptionMaps = parseMaps(config.exceptionMaps)
-
-  res.forEach(function(c) {
-
-    // handle exception maps first
-    var idx
-    for (idx = 0; idx < exceptionMaps.length; idx++) {
-      if (exceptionMaps[idx][0] === c.Image.split(':')[0]) {
-        return createRoute(exceptionMaps[idx][1], c)
-      }
-    }
-
-    var img = c.Image.split('/')
-    // ignore if doesn't match our format
-    if (img.length !== 2) return
-
-    var found = false
-    for (idx = 0; idx < prefixMaps.length; idx++) {
-      if (prefixMaps[idx][0] === img[0]) {
-        found = true
-        break
-      }
-    }
-
-    if (!found) return
-
-    var domain = prefixMaps[idx][1]
-    var subdomain = img[1].split(':')[0]
-    createRoute(subdomain + '.' + domain, c)
-    // special case for 'www' and 'web' containers.
-    // these also map to root of domain and 'www.'
-    if (subdomain === 'www' || subdomain === 'web') {
-      createRoute('www.' + domain, c)
-      createRoute(domain, c)
-    }
-  })
-
-  if (f.length === 0) {
-    console.log("no running images found to sync. start some?")
-    process.exit(0)
-  }
-
-  async.series(f, function(err, res) {
-    if (err) {
-      console.log("error syncing hipache: %s", err)
-      process.exit(1)
-    }
-
-    console.log("hipache synced ok")
-    redis.quit()
-  })
-}
-
 function usage() {
 
   console.log("Usage: dockerfu [OPTIONS] <sync|show> <...>")
@@ -184,7 +105,86 @@ config = rc('dockerfu', DEFAULT_CONFIG)
 module.exports.config = config
 
 var sync = module.exports.sync = function(redis, docker, cb) {
-  docker.listContainers(function(err, res) { containerList(redis, err, res)})
+  function containerList(err, res) {
+
+    var f = []
+
+    var createRoute = function(k, c){
+      var port = findHttpPorts(c.Ports)
+      if (!port) {
+        console.log("error: couldn't find valid public http port for container %s", c.Id)
+        process.exit(1)
+      }
+      var backend = config.hipacheBackend + ':' + port
+      f.push(function(cb) {
+        redis.multi()
+          .del('frontend:' + k)
+          .rpush('frontend:' + k, k)
+          .rpush('frontend:' + k, backend)
+          .exec(function(err, res) {
+            if (err) return cb(err)
+            console.log("mapped %s to %s", k, backend)
+            cb()
+          })
+      })
+
+    }
+
+    var prefixMaps = parseMaps(config.prefixMaps)
+    var exceptionMaps = parseMaps(config.exceptionMaps)
+
+    res.forEach(function(c) {
+
+      // handle exception maps first
+      var idx
+      for (idx = 0; idx < exceptionMaps.length; idx++) {
+        if (exceptionMaps[idx][0] === c.Image.split(':')[0]) {
+          return createRoute(exceptionMaps[idx][1], c)
+        }
+      }
+
+      var img = c.Image.split('/')
+      // ignore if doesn't match our format
+      if (img.length !== 2) return
+
+      var found = false
+      for (idx = 0; idx < prefixMaps.length; idx++) {
+        if (prefixMaps[idx][0] === img[0]) {
+          found = true
+          break
+        }
+      }
+
+      if (!found) return
+
+      var domain = prefixMaps[idx][1]
+      var subdomain = img[1].split(':')[0]
+      createRoute(subdomain + '.' + domain, c)
+      // special case for 'www' and 'web' containers.
+      // these also map to root of domain and 'www.'
+      if (subdomain === 'www' || subdomain === 'web') {
+        createRoute('www.' + domain, c)
+        createRoute(domain, c)
+      }
+    })
+
+    if (f.length === 0) {
+      console.log("no running images found to sync. start some?")
+      process.exit(0)
+    }
+
+    async.series(f, function(err, res) {
+      if (err) {
+        console.log("error syncing hipache: %s", err)
+        process.exit(1)
+      }
+
+      console.log("hipache synced ok")
+      cb()
+    })
+  }
+
+  docker.listContainers(containerList)
 }
 
 var show = module.exports.show = function(redis, docker, cb) {
