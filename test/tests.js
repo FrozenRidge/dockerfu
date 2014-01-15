@@ -18,6 +18,22 @@ describe('#dockerfu', function() {
 
   })
 
+  describe('parsePrefixMaps', function() {
+
+    it('should correctly parse prefix maps', function() {
+
+      dockerfu.config.prefixMaps = "frozenridge:frozenridge.co,stridercd:stridercd.com"
+      var r = dockerfu.parsePrefixMaps(dockerfu.config)
+
+      expect(r).to.have.length(2)
+      expect(r[0]).to.have.length(2)
+      expect(r[0][0]).to.eql("frozenridge")
+      expect(r[0][1]).to.eql("frozenridge.co")
+
+    })
+
+  })
+
 
 
 

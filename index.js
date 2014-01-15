@@ -35,7 +35,6 @@ var findHttpPorts = module.exports.findHttpPorts = function(ports) {
 
   var webPorts = config.webPorts.split(',')
 
-
   for (var i = 0; i < ports.length; i++) {
     var p = ports[i]
     var privPort = p.PrivatePort.toString()
@@ -45,12 +44,22 @@ var findHttpPorts = module.exports.findHttpPorts = function(ports) {
   return false
 }
 
-function containerList(err, res) {
+var parsePrefixMaps = module.exports.parsePrefixMaps = function(config) {
+
+  var maps = []
+  config.prefixMaps.split(",").forEach(function(map) {
+    maps.push(map.split(":"))
+  })
+
+  return maps
+}
+
+function containerList(redis, err, res) {
 
   var f = []
 
   var createRoute = function(k, c){
-    var port = findHttpPort(c.Ports)
+    var port = findHttpPorts(c.Ports)
     if (!port) {
       console.log("error: couldn't find valid public http port for container %s", c.Id)
       process.exit(1)
@@ -70,39 +79,28 @@ function containerList(err, res) {
 
   }
 
+  var prefixMaps = parsePrefixMaps(config)
+
   res.forEach(function(c) {
-    if (c.Image.indexOf('frozenridge/blog') === 0){
-      // Special case for blog TODO: Make nicer
-      createRoute('blog.frozenridge.co', c)
-      return;
+
+    var img = c.Image.split('/')
+    // ignore if doesn't match our format
+    if (img.length !== 2) return
+
+    var found = false
+    var idx
+    for (idx = 0; idx < prefixMaps.length; idx++) {
+      if (prefixMaps[idx][0] === img[0]) {
+        found = true
+        break
+      }
     }
 
-    if (c.Image.indexOf('frozenridge/web') === 0){
-      // Special case for website TODO: Make nicer
-      createRoute('www.frozenridge.co', c)
-      createRoute('frozenridge.co', c)
-      return;
-    }
+    if (!found) return
 
-    if (c.Image.indexOf('frozenridge/gitbackups') === 0){
-      // Special case for gitbackups website TODO: Make nicer
-      createRoute('www.gitbackups.com', c)
-      createRoute('gitbackups.com', c)
-      return;
-    }
-
-    if (c.Image.indexOf('stridercd') === -1) return
-    var s = c.Image.split('/')
-    if (s.length !== 2) return
-    s = s[1]
-    s = s.split(':')[0]
-    createRoute(s + '.stridercd.com', c);
-
-    // Special case for naked stridercd.com to point to same backend as www.stridercd.com
-    if (s === 'www') {
-      var sk = 'stridercd.com'
-      createRoute(sk, c);
-    }
+    var domain = prefixMaps[idx][0]
+    var subdomain = prefixMaps[idx][1]
+    createRoute(subdomain + '.' + domain, c)
   })
 
   if (f.length === 0) {
@@ -142,9 +140,43 @@ function usage() {
   process.exit(1)
 }
 
+var connectDocker = function(config) {
+  var dockerSocketPath = config.dockerSocketPath
+  var dockerHost = config.dockerHost
+  var dockerPort = config.dockerPort
+  var opts = {}
+  if (dockerHost) {
+    opts.host = dockerHost
+    // default port
+    opts.port = 4243
+  }
+  if (dockerPort) {
+    opts.port = dockerPort
+  }
+  // if dockerHost is set, use that. otherwise UNIX domain socket.
+  if (dockerSocketPath && !dockerHost) {
+    opts.socketPath = dockerSocketPath
+  }
+  console.log("docker connection opts: ", opts)
+  return new docker(opts)
+}
+
+var connectRedis = function(config) {
+  return redis.createClient(parseInt(10,config.redisPort), config.redisHost)
+}
+
 config = rc('dockerfu', DEFAULT_CONFIG)
 // for testing
 module.exports.config = config
+
+var sync = module.exports.sync = function(redis, docker, cb) {
+  docker.listContainers(function(err, res) { containerList(redis, err, res)})
+}
+
+var show = module.exports.show = function(redis, docker, cb) {
+
+
+}
 
 if (!module.parent) {
 
@@ -156,10 +188,30 @@ if (!module.parent) {
     usage()
   }
 
-  console.log("config: ", config)
+  var d = connectDocker(config)
+  var r = connectRedis(config)
 
+  var operations = []
   argv._.forEach(function(op) {
-
+    if (op === 'sync') {
+      return operations.push(function(cb) {
+        sync(r, d, function(err) {
+          cb()
+        })
+      })
+    }
+    if (op === 'show') {
+      return operations.push(function(cb) {
+        show(r, d, function(err) {
+          cb()
+        })
+      })
+    }
+  })
+  
+  async.series(operations, function(err) {
+    console.log("finished")
+    r.quit()
   })
 
 }
