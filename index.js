@@ -19,6 +19,7 @@ var DEFAULT_CONFIG = {
   // stridercd/www maps to http://stridercd.com and http://www.stridercd.com
   prefixMaps: "frozenridge:frozenridge.co,stridercd:stridercd.com",
   // Special maps for FQDNs
+  // In this example, the frozenridge/gitbackups container will be mapped to gitbackups.com
   exceptionMaps: "frozenridge/gitbackups:gitbackups.com,frozenridge/gitbackups:www.gitbackups.com"
 }
 
@@ -171,7 +172,6 @@ var connectDocker = function(config) {
   if (dockerSocketPath && !dockerHost) {
     opts.socketPath = dockerSocketPath
   }
-  console.log("docker connection opts: ", opts)
   return new docker(opts)
 }
 
@@ -188,7 +188,7 @@ var sync = module.exports.sync = function(redis, docker, cb) {
 }
 
 var show = module.exports.show = function(redis, docker, cb) {
-  var _containers = []
+  var _containers = {}
 
   var routes = new table({
     head: ["Route", "Forward", "Container"]
@@ -207,22 +207,28 @@ var show = module.exports.show = function(redis, docker, cb) {
     redis.lrange(k, 0, -1, function(err, res){
       if (err) return cb(err);
 
+      var forwardPort = res[1].split(':')[2]
       var containerName = "stridercd/" + res[0].replace('.stridercd.com', '') + ":latest"
-      // special case for stridercd.com naked route
-      if (res[0] === 'stridercd.com') containerName = 'stridercd/www:latest'
 
-      container = _containers[containerName]
+      container = _containers[forwardPort]
       routes.push([k, res[1], (container ? container.Status : "! Down !")])
       cb(null, res)
     })
   }
 
   var lookupContainers = function(cb){
+    var webPorts = config.webPorts.split(',')
     docker.listContainers(function(err, res){
       if (err) throw err;
-
       res.forEach(function(f){
-        _containers[f.Image] = f
+        var i
+        for (i = 0; i < f.Ports.length; i++) {
+          var p = f.Ports[i]
+          if (p.IP !== '' && webPorts.indexOf(p.PrivatePort.toString()) !== -1) {
+            _containers[p.PublicPort] = f
+            break
+          }
+        }
       })
 
       cb(err, res); 
@@ -274,7 +280,6 @@ if (!module.parent) {
   })
   
   async.series(operations, function(err) {
-    console.log("finished")
     r.quit()
   })
 
