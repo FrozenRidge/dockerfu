@@ -1,10 +1,13 @@
 {
   "name": "dockerfu",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Martial Docker and Hipache. Techniques for zero-downtime updates of Docker-ized services and more.",
   "main": "index.js",
   "scripts": {
     "test": "mocha -R spec"
+  },
+  "bin": {
+    "dockerfu": "index.js"
   },
   "repository": {
     "type": "git",
