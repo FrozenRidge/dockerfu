@@ -101,6 +101,12 @@ function containerList(redis, err, res) {
     var domain = prefixMaps[idx][0]
     var subdomain = prefixMaps[idx][1]
     createRoute(subdomain + '.' + domain, c)
+    // special case for 'www' and 'web' containers.
+    // these also map to root of domain and 'www.'
+    if (subdomain === 'www' || subdomain === 'web') {
+      createRoute('www.' + domain, c)
+      createRoute(domain, c)
+    }
   })
 
   if (f.length === 0) {
