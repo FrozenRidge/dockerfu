@@ -188,8 +188,58 @@ var sync = module.exports.sync = function(redis, docker, cb) {
 }
 
 var show = module.exports.show = function(redis, docker, cb) {
+  var _containers = []
 
+  var routes = new table({
+    head: ["Route", "Forward", "Container"]
+  , style : {
+      compact: true
+    ,"padding-left":1
+    ,"padding-right":1
+    }
+  })
+  var done = function(){
+    console.log(routes.toString())
+    cb()
+  }
 
+  var lookupRoute = function(k, cb){
+    redis.lrange(k, 0, -1, function(err, res){
+      if (err) return cb(err);
+
+      var containerName = "stridercd/" + res[0].replace('.stridercd.com', '') + ":latest"
+      // special case for stridercd.com naked route
+      if (res[0] === 'stridercd.com') containerName = 'stridercd/www:latest'
+
+      container = _containers[containerName]
+      routes.push([k, res[1], (container ? container.Status : "! Down !")])
+      cb(null, res)
+    })
+  }
+
+  var lookupContainers = function(cb){
+    docker.listContainers(function(err, res){
+      if (err) throw err;
+
+      res.forEach(function(f){
+        _containers[f.Image] = f
+      })
+
+      cb(err, res); 
+    })
+  }
+
+  var lookupRoutes = function(cb){
+    redis.multi()
+      .keys('*')
+      .exec(function(err, keys){ 
+        async.map(keys[0], lookupRoute, cb);
+      })
+  }
+
+  lookupContainers(function(){
+    lookupRoutes(done)
+  })
 }
 
 if (!module.parent) {
