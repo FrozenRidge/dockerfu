@@ -31,8 +31,8 @@ Exception Maps can be specified with the `--exceptionMaps` CLI option. E.g. `doc
 
 
 
-Zero-Downtime Updates of Docker Containers with Dockerfu
-========================================================
+Zero-Downtime Updates with Dockerfu
+===================================
 
 A zero-downtime update means:
 
