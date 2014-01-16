@@ -1,6 +1,6 @@
 {
   "name": "dockerfu",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Martial Docker and Hipache. Techniques for zero-downtime updates of Docker-ized services and more.",
   "main": "index.js",
   "scripts": {
