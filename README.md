@@ -20,10 +20,16 @@ At FrozenRidge, we use Docker for everything and therefore have a large number o
 
 For instance, our blog (http://blog.frozenridge.co) is a Docker image named `frozenridge/blog`. Our marketing homepage (http://frozenridge.co and http://www.frozenridge.co) is a Docker image named `frozenridge/web`. With the Prefix Map `frozenridge:frozenridge.co`, Dockerfu will create Hipache routes for http://blog.frozenridge.co to the public web port of the running `frozenridge/blog` Docker container. Furthermore, `web` and `www` suffixes are treated specially, such that Dockerfu will create Hipache routes for *both* http://www.frozenridge.co *and* http://frozenridge.co to the public web port of the running `frozenridge/web` Docker container.
 
+Prefix Maps can be specified with the `--prefixMaps` CLI option. E.g. `dockerfu --prefixMaps="frozenridge:frozenridge.co,stridercd:stridercd.com"`. Note that multiple maps can be specified comma-separated. Additionally, since dockerfu uses rc, these can be stored in a configuration file and loaded via `--config` CLI option.
+
 
 ### Exception Maps
 
-Sometimes you just want to route an arbitrary Docker image to an arbitrary URL, without a convention. Exception maps let you do just this. Say you want to map `frozenridge/gitbackups` to the URL http://gitbackups.com. This is easy with the exception map "frozenridge/gitbackups:gitbackups.com".
+Sometimes you just want to route an arbitrary Docker image to an arbitrary URL, without a convention. Exception maps enable you to do this. Say you want to map `frozenridge/gitbackups` to the URL http://gitbackups.com. This is easy with the exception map "frozenridge/gitbackups:gitbackups.com".
+
+Exception Maps can be specified with the `--exceptionMaps` CLI option. E.g. `dockerfu --exceptionMaps="frozenridge/gitbackups:gitbackups.com"`. Note that multiple maps can be specified comma-separated. Additionally, since dockerfu uses rc, these can be stored in a configuration file and loaded via `--config` CLI option.
+
+
 
 Zero-Downtime Updates of Docker Containers with Dockerfu
 ========================================================
