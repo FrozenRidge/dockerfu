@@ -10,11 +10,11 @@ Glue between [Docker](http://docker.io) and [Hipache](https://github.com/dotclou
 Docker Routing with Dockerfu
 ============================
 
-Dockerfu provides a way to dynamically route HTTP URLs to particular Docker containers. To do this, it uses two conventions:
+Dockerfu provides a way to dynamically route HTTP URLs to particular Docker containers. To do this, it uses [Hipache](https://github.com/dotcloud/hipache) and two conventions:
 
 ### Prefix Maps
 
-Prefix Maps are the convention that routable Docker images will be named *prefix*/*suffix* (e.g. frozenridge/www). *prefix* maps to a domain (e.g. frozenridge.co) and the suffix maps to a subdomain (e.g. www). These Prefix Maps are of course configurable. 
+Prefix Maps are the convention that routable Docker images will be named *prefix*/*suffix* (e.g. frozenridge/www). *prefix* maps to a domain (e.g. frozenridge.co) and *suffix* maps to a subdomain (e.g. www). These Prefix Maps are configurable. 
 
 At [FrozenRidge](http://frozenridge.co), we use Docker for everything and therefore have a large number of containers which map to various domains off `frozenridge.co` and `stridercd.com`.
 
