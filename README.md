@@ -18,7 +18,7 @@ Prefix Maps are the convention that routable Docker images will be named *prefix
 
 At [FrozenRidge](http://frozenridge.co), we use Docker for everything and therefore have a large number of containers which map to various subdomains off `frozenridge.co`.
 
-Hence we use the Prefix Map `frozenridge:frozenridge.co.
+Hence we use the Prefix Map `frozenridge:frozenridge.co`.
 
 #### blog.frozenridge.co example
 
