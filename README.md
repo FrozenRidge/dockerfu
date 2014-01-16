@@ -29,8 +29,6 @@ Sometimes you just want to route an arbitrary Docker image to an arbitrary URL, 
 
 Exception Maps can be specified with the `--exceptionMaps` CLI option. E.g. `dockerfu --exceptionMaps="frozenridge/gitbackups:gitbackups.com"`. Note that multiple maps can be specified comma-separated. Additionally, since dockerfu uses rc, these can be stored in a configuration file and loaded via `--config` CLI option.
 
-
-
 Zero-Downtime Updates with Dockerfu
 ===================================
 
@@ -71,6 +69,8 @@ Dockerfu is available in NPM. `npm install dockerfu`
 
 Usage
 =====
+
+Dockerfu is a simple CLI program which talks to redis (to configure Hipache) and dockerd. It has two modes: `sync` and `show`. `sync` writes to redis, while `show` simply displays configured routes.
 
 ```
 Usage: dockerfu [OPTIONS] <sync|show> <...>
