@@ -88,6 +88,42 @@ Usage: dockerfu [OPTIONS] <sync|show> <...>
 └────────────────────────────────────────────────┴────────────────────────────────────────────────────────────────────────┘
 ```
 
+Sample `dockerfu show` run:
+
+```bash
+ dockerfu show
+┌───────────────────────────────┬────────────────────────┬───────────────┐
+│ Route                         │ Forward                │ Container     │
+├───────────────────────────────┼────────────────────────┼───────────────┤
+│ frontend:stridercd.com        │ http://127.0.0.1:49158 │ Up 5 weeks    │
+│ frontend:blog.frozenridge.co  │ http://127.0.0.1:49198 │ Up 28 minutes │
+│ frontend:www.frozenridge.co   │ http://127.0.0.1:49154 │ Up 5 weeks    │
+│ frontend:www.stridercd.com    │ http://127.0.0.1:49158 │ Up 5 weeks    │
+│ frontend:hosted.stridercd.com │ http://127.0.0.1:49155 │ Up 5 weeks    │
+│ frontend:gitbackups.com       │ http://127.0.0.1:49182 │ Up 3 weeks    │
+│ frontend:web.frozenridge.co   │ http://127.0.0.1:49154 │ Up 5 weeks    │
+│ frontend:media.stridercd.com  │ http://127.0.0.1:49153 │ Up 5 weeks    │
+│ frontend:frozenridge.co       │ http://127.0.0.1:49154 │ Up 5 weeks    │
+└───────────────────────────────┴────────────────────────┴───────────────┘
+```
+
+Sample `dockerfu sync` run:
+
+```bash
+dockerfu sync
+mapped blog.frozenridge.co to http://127.0.0.1:49198
+mapped gitbackups.com to http://127.0.0.1:49182
+mapped hosted.stridercd.com to http://127.0.0.1:49155
+mapped web.frozenridge.co to http://127.0.0.1:49154
+mapped www.frozenridge.co to http://127.0.0.1:49154
+mapped frozenridge.co to http://127.0.0.1:49154
+mapped media.stridercd.com to http://127.0.0.1:49153
+mapped www.stridercd.com to http://127.0.0.1:49158
+mapped www.stridercd.com to http://127.0.0.1:49158
+mapped stridercd.com to http://127.0.0.1:49158
+hipache synced ok
+```
+
 
 
 Tests
