@@ -28,6 +28,36 @@ Sometimes you just want to route an arbitrary Docker image to an arbitrary URL, 
 Zero-Downtime Updates of Docker Containers with Dockerfu
 ========================================================
 
+A zero-downtime update means:
+
+- Start new container
+- Wait for it to be ready
+- Update router to send traffic to new container
+- Kill old container
+
+This is easy to do with shell, docker and dockerfu:
+
+```bash
+
+# get id of old (currently running) container
+OLDID=$(docker ps | grep $CONTAINER_NAME | awk '{ print $1 }')
+
+# build new container
+# you could also pull the binary pre-build container instead of building
+# this is just an example.
+docker build -t $CONTAINER_NAME /path/to/Dockerfile
+
+# start new container
+docker run -d -p $WEB_PORT $CONTAINER_NAME
+
+# update routing to send traffic to new container
+dockerfu sync
+
+# kill old container
+docker kill $OLDID
+
+```
+
 Installation
 ============
 
