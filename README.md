@@ -16,7 +16,7 @@ Dockerfu provides a way to dynamically route HTTP URLs to particular Docker cont
 
 Prefix Maps are the convention that routable Docker images will be named *prefix*/*suffix* (e.g. frozenridge/www). *prefix* maps to a domain (e.g. frozenridge.co) and the suffix maps to a subdomain (e.g. www). These Prefix Maps are of course configurable. 
 
-At FrozenRidge, we use Docker for everything and therefore have a large number of containers which map to various domains off `frozenridge.co` and `stridercd.com`.
+At [FrozenRidge](http://frozenridge.co), we use Docker for everything and therefore have a large number of containers which map to various domains off `frozenridge.co` and `stridercd.com`.
 
 For instance, our blog (http://blog.frozenridge.co) is a Docker image named `frozenridge/blog`. Our marketing homepage (http://frozenridge.co and http://www.frozenridge.co) is a Docker image named `frozenridge/web`. With the Prefix Map `frozenridge:frozenridge.co`, Dockerfu will create Hipache routes for http://blog.frozenridge.co to the public web port of the running `frozenridge/blog` Docker container. Furthermore, `web` and `www` suffixes are treated specially, such that Dockerfu will create Hipache routes for *both* http://www.frozenridge.co *and* http://frozenridge.co to the public web port of the running `frozenridge/web` Docker container.
 
