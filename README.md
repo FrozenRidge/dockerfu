@@ -91,7 +91,7 @@ Usage: dockerfu [OPTIONS] <sync|show> <...>
 Sample `dockerfu show` run:
 
 ```bash
- dockerfu show
+ $ dockerfu show
 ┌───────────────────────────────┬────────────────────────┬───────────────┐
 │ Route                         │ Forward                │ Container     │
 ├───────────────────────────────┼────────────────────────┼───────────────┤
@@ -110,7 +110,7 @@ Sample `dockerfu show` run:
 Sample `dockerfu sync` run:
 
 ```bash
-dockerfu sync
+$ dockerfu sync
 mapped blog.frozenridge.co to http://127.0.0.1:49198
 mapped gitbackups.com to http://127.0.0.1:49182
 mapped hosted.stridercd.com to http://127.0.0.1:49155
