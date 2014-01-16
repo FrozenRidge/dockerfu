@@ -5,12 +5,12 @@ Dockerfu
 
 ![Dockerfu image](http://farm6.staticflickr.com/5485/10700976604_0aa7f937aa.jpg)
 
-Glue between [Docker](http://docker.io) and [Hipache](https://github.com/dotcloud/hipache). Techniques to do Docker routing, zero-downtime updates of Docker containers etc.
+Glue between [Docker](http://docker.io) and [Hipache](https://github.com/dotcloud/hipache). Techniques to do Docker HTTP routing, zero-downtime updates of Docker containers, etc.
 
 Docker Routing with Dockerfu
 ============================
 
-Dockerfu provides a way to dynamically route URLs to particular Docker containers. To do this, it uses two conventions:
+Dockerfu provides a way to dynamically route HTTP URLs to particular Docker containers. To do this, it uses two conventions:
 
 ### Prefix Maps
 
