@@ -25,7 +25,7 @@ Hence we use the Prefix Map `frozenridge:frozenridge.co.
 Our blog (http://blog.frozenridge.co) is a Docker image named `frozenridge/blog`.
 With the Prefix Map `frozenridge:frozenridge.co`, Dockerfu will create Hipache routes for http://blog.frozenridge.co to the public web port of the running `frozenridge/blog` Docker container.
 
-#### <(www.)frozenridge.co> example
+#### \(www\.\)frozenridge\.co example
 
 Our marketing homepage (http://frozenridge.co and http://www.frozenridge.co) is a Docker image named `frozenridge/web`. 
 `web` and `www` suffixes are treated specially, such that Dockerfu will create Hipache routes for *both* http://www.frozenridge.co *and* http://frozenridge.co to the public web port of the running `frozenridge/web` Docker container.
