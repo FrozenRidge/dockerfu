@@ -1,7 +1,7 @@
 Dockerfu
 ========
 
-[![Build Status](https://frozenridge.stridercd.com/frozenridge/dockerfu/badge)](https://frozenridge.stridercd.com/frozenridge/dockerfu/)
+[![Build Status](http://frozenridge.stridercd.com/frozenridge/dockerfu/badge)](https://frozenridge.stridercd.com/frozenridge/dockerfu/)
 
 ![Dockerfu image](http://farm6.staticflickr.com/5485/10700976604_0aa7f937aa.jpg)
 
@@ -52,6 +52,9 @@ A zero-downtime update means:
 This is easy to do with shell, docker and dockerfu:
 
 ```bash
+
+WEB_PORT="3000"
+CONTAINER_NAME="coolapp/www"
 
 # get id of old (currently running) container
 OLDID=$(docker ps | grep $CONTAINER_NAME | awk '{ print $1 }')
